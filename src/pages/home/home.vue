@@ -4,7 +4,7 @@
         <el-header style="height: 70px;padding: 0;">
             <el-menu class="el-menu-demo" mode="horizontal" >
                 <p class="system-text">浣熊小超管理系统</p>
-                <el-menu-item index="1">处理中心</el-menu-item>
+                <el-menu-item index="1" disabled>处理中心</el-menu-item>
                 <el-menu-item index="2" disabled>消息中心</el-menu-item>
                 <el-menu-item index="4" @click="logoutEvt">退出登录</el-menu-item>
             </el-menu>

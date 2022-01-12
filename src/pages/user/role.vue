@@ -1,23 +1,28 @@
 <template>
       <el-main>
-        <el-button type="primary" size="small" @click="dialogFormVisible = true">新增权限</el-button>
-        <el-table :data="tableData" border height="700px">
+        <el-button type="primary" ref="scpoe" size="small" @click="dialogFormVisible=true;showRoleList">新增权限</el-button>
+        <el-table :data="tableData" border height="700px" v-loading="loading">
           <el-table-column prop="id" label="权限编码"></el-table-column>
           <el-table-column prop="name" label="权限名称"></el-table-column>
           <el-table-column prop="menu.length" label="权限菜单(/条)"></el-table-column>
           <el-table-column prop="remark" label="备注"></el-table-column>
             <el-table-column label="操作">
               <template v-slot="scope">
-                <el-button @click="dialogFormVisible = true;showRoleList(scope)" type="text" size="small">编辑</el-button>
+                <el-button @click="dialogFormVisible=true;showRoleList(scope)" type="text" size="small">编辑</el-button>
               </template>
             </el-table-column>
         </el-table>
-        <el-dialog :title="title" :visible.sync="dialogFormVisible">
+        <el-dialog
+          :title="title"
+          :visible.sync="dialogFormVisible"
+          top="10vh"
+          destroy-on-close
+          custom-class="mask">
           <el-form :model="role" :rules="rules" ref="role" label-width="100px" class="demo-ruleForm">
             <el-row :gutter="20">
               <el-col :span="11">
                 <el-form-item label="权限编码" prop="id">
-                  <el-input v-model="role.id" size="small" />
+                  <el-input v-model="role.id" size="small" disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="11">
@@ -26,15 +31,26 @@
                 </el-form-item>
               </el-col>
               <el-col :span="11">
-                <el-form-item label="权限菜单" prop="roleArr">
-                  <el-form-item label="商品列表：">
-                    <el-checkbox-group v-model="role.roleArr">
-                      <el-checkbox label="新建" name="roleArr"></el-checkbox>
-                      <el-checkbox label="读取" name="roleArr"></el-checkbox>
-                      <el-checkbox label="更新" name="roleArr"></el-checkbox>
-                      <el-checkbox label="删除" name="roleArr"></el-checkbox>
+                <el-form-item label="权限菜单">
+                  <el-form-item
+                    v-for="item in roleList"
+                    :key="item.name"
+                    :label="item.name">
+                    <el-checkbox-group :value="item.temp" v-model="item.temp">
+                      <el-checkbox
+                        :label="it"
+                        v-for="it in item.right"
+                        :key="it"/>
                     </el-checkbox-group>
                   </el-form-item>
+                </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                  <el-input
+                    type="textarea"
+                    placeholder="请输入内容"
+                    :autosize="{ minRows: 4, maxRows: 4}"
+                    v-model="tableData.remark">
+                  </el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -49,23 +65,43 @@
 </template>
 
 <script>
-import { getRoleList, getRoleMenuInfo } from '../../apis/userApi'
+import { getRoleList } from '../../apis/userApi'
 export default {
   data () {
     return {
+      loading: true,
       tableData: [{
         id: '',
         name: '',
         menu: '',
         remark: ''
       }],
-      title: '编辑权限',
+      title: '新建权限',
+      checked: false,
       dialogFormVisible: false,
       role: {
         id: '',
         name: '',
-        roleArr: []
+        remark: '',
+        menu: []
       },
+      roleList: [
+        { temp: ['C'], name: '商品列表', index: '0', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '商品编辑', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '供应商', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '首页banner', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '商品推荐', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '商品视频', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '采购单列表', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '采购单编辑', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '收货单管理', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '收货单编辑', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '订单列表', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '用户列表', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '用户编辑', right: { C: '新建', U: '更新' } },
+        { temp: [], name: '用户角色', right: { C: '新建', R: '读取', U: '更新' } },
+        { temp: [], name: '用户地址', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '用户优惠', right: { C: '新建', R: '读取', U: '更新', D: '删除' } }],
       rules: {
         id: [
           { required: true, message: '请输入权限编码', trigger: 'blur' }
@@ -82,7 +118,6 @@ export default {
 
   created () {
     this.getRoleList()
-    this.getRoleMenu()
   },
 
   methods: {
@@ -91,16 +126,26 @@ export default {
       const result = await getRoleList()
       if (result.code === 200) {
         this.tableData = [...result.data.rows]
+        this.loading = false
       }
     },
 
-    // 获取所有权限菜单
-    async getRoleMenu () {
-      const result = await getRoleMenuInfo()
-      if (result.code === 200) {
-        console.log(result)
-      }
+    // 判断编辑权限
+    showRoleList ({ row }) {
+      this.title = '编辑权限'
+      this.role = { ...row }
     },
+    // // 判断编辑权限
+    // showRoleList ({ row }) {
+    //   console.log(row)
+    //   const userData = !!row
+    //   if (!row) {
+    //     this.title = '新建权限'
+    //   } else {
+    //     this.title = '编辑权限'
+    //     this.role = { ...row }
+    //   }
+    // },
 
     // 提交表单
     submitForm (role) {
@@ -122,10 +167,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-button{
-  margin-bottom: 12px;
-}
-.el-col {
-  width: auto;
-}
+@import url('../../style/');
+  .el-button{
+    margin-bottom: 12px;
+  }
+  .el-col {
+    width: 100%;
+  }
+  .el-dialog__wrapper{
+    overflow: auto;
+  }
+/deep/.el-dialog {
+    overflow-y: auto;
+    height: 80%;
+  }
 </style>

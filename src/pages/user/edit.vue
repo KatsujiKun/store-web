@@ -1,6 +1,12 @@
 <template>
   <el-main>
-      <el-form :model="userData" :rules="rules" ref="userData" label-width="100px" class="demo-ruleForm">
+      <el-form
+        :model="userData"
+        :rules="rules"
+        ref="userData"
+        label-width="100px"
+        class="demo-ruleForm"
+        v-loading="loading">
         <el-form-item label="用户编码" prop="id">
             <el-input v-model="userData.id"></el-input>
         </el-form-item>
@@ -67,6 +73,7 @@ import { getUserInfo, getRoleInfo, getDeptInfo, updatedUserData } from '../../ap
 export default {
   data () {
     return {
+      loading: true,
       userData: {
         id: '',
         name: '',
@@ -131,6 +138,7 @@ export default {
       const resule = await getUserInfo(this.$route.query.id)
       if (resule.code === 200) {
         this.userData = { ...resule.data }
+        this.loading = false
       }
     },
 

@@ -2,7 +2,7 @@
         <el-main>
           <el-input v-model="query.name" size="small" placeholder="请输入商品编码"></el-input>
           <el-button type="primary" size="small" @click="queryUser">查询</el-button>
-          <el-table :data="tableData" border height="700px">
+          <el-table :data="tableData" border height="700px" v-loading="loading">
             <el-table-column prop="name" label="商品名称"></el-table-column>
             <el-table-column prop="price" label="商品价格"> </el-table-column>
             <el-table-column prop="discount" label="优惠价格"> </el-table-column>
@@ -59,6 +59,7 @@ import { getProductList } from '../../apis/productApi'
 export default {
   data () {
     return {
+      loading: true,
       total: 0,
       query: {
         id: '',
@@ -113,6 +114,7 @@ export default {
       if (result.code === 200) {
         this.tableData = result.data.rows
         this.total = result.data.total
+        this.loading = false
       }
     },
 

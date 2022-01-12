@@ -38,13 +38,20 @@
 </template>
 
 <script>
+import { getAddressInfo } from '../../apis/userApi'
 export default {
   data () {
     return {
-      tableData: [{
-        id: '',
-        address: ''
+      query: [{
+        size: 1,
+        page: 20
       }],
+
+      tableData: [{
+        userID: 'admin17',
+        address: '光明小区123号',
+      }],
+
       addressData: {
         id: '',
         userID: '',
@@ -55,30 +62,43 @@ export default {
         et: '',
         remark: ''
       },
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      total: 0
     }
   },
 
+  created () {
+    this.getAddressApi()
+  },
+
   methods: {
+    // 获取地址
+    getAddressApi () {
+      this.tableData = Array.from(Array(60), (_, i) => {
+        return { id: 'admin'+i, address: '光明小区123号'}
+      })
+      this.total = this.tableData.length
+    },
+    
     // 编辑地址
     editEvt () {
 
     },
 
     // 查看详细地址
-    showaddressData () {
+    showaddressData (scope) {
 
     },
 
     // 分页
     handleSizeChange (size) {
       this.query.size = size
-      this.userListApi()
+      this.getAddressApi()
     },
 
     handleCurrentChange (page) {
       this.query.page = page
-      this.userListApi()
+      this.getAddressApi()
     }
   }
 }

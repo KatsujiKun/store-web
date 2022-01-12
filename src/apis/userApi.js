@@ -78,3 +78,10 @@ export function getRoleMenuInfo () {
     url: '/menu/list'
   })
 }
+
+// 获取地址信息
+export function getAddressInfo () {
+  return ajax({
+    url: '/address'
+  })
+}

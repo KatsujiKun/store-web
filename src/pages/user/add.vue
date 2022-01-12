@@ -1,6 +1,12 @@
 <template>
   <el-main>
-      <el-form :model="userData" :rules="rules" ref="userData" label-width="100px" class="demo-ruleForm">
+      <el-form
+        :model="userData"
+        :rules="rules"
+        ref="userData"
+        label-width="100px"
+        class="demo-ruleForm"
+        v-loading="loading">
         <el-form-item label="用户编码" prop="id">
             <el-input v-model="userData.id"></el-input>
         </el-form-item>
@@ -67,6 +73,7 @@ import { getDeptInfo, getRoleInfo, addUserData } from '../../apis/userApi'
 export default {
   data () {
     return {
+      loading: true,
       userData: {
         id: '',
         name: '',
@@ -141,6 +148,7 @@ export default {
       const result = await getRoleInfo()
       if (result.code === 200) {
         this.roleList = result.data.rows
+        this.loading = false
       }
     },
 

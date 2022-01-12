@@ -1,8 +1,8 @@
 <template>
         <el-main>
-          <el-input v-model="query.name" size="small" placeholder="请输入用户编码"></el-input>
+          <el-input v-model="query.name" size="small" placeholder="请输入用户编码"/>
           <el-button type="primary" size="small" @click="queryUser">查询</el-button>
-          <el-table :data="tableData" border height="700px">
+          <el-table :data="tableData" border height="700px" v-loading="loading">
             <el-table-column prop="id" label="用户编码"></el-table-column>
             <el-table-column prop="name" label="用户姓名"></el-table-column>
             <el-table-column prop="dept" label="部门"> </el-table-column>
@@ -55,6 +55,7 @@ import { userListApi, delUser } from '../../apis/userApi'
 export default {
   data () {
     return {
+      loading: true,
       total: 0,
       query: {
         id: '',
@@ -101,6 +102,7 @@ export default {
       if (result.code === 200) {
         this.tableData = result.data.rows
         this.total = result.data.total
+        this.loading = false
       }
     },
 
