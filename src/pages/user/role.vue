@@ -36,8 +36,9 @@
                     v-for="item in roleList"
                     :key="item.name"
                     :label="item.name">
-                    <el-checkbox-group :value="item.temp" v-model="item.temp">
+                    <el-checkbox-group  v-model="item.temp">
                       <el-checkbox
+                        :value="it.temp"
                         :label="it"
                         v-for="it in item.right"
                         :key="it"/>
@@ -70,6 +71,7 @@ export default {
   data () {
     return {
       loading: true,
+      dialogFormVisible: false,
       tableData: [{
         id: '',
         name: '',
@@ -77,8 +79,6 @@ export default {
         remark: ''
       }],
       title: '新建权限',
-      checked: false,
-      dialogFormVisible: false,
       role: {
         id: '',
         name: '',
@@ -86,7 +86,7 @@ export default {
         menu: []
       },
       roleList: [
-        { temp: ['C'], name: '商品列表', index: '0', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
+        { temp: [], name: '商品列表', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
         { temp: [], name: '商品编辑', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
         { temp: [], name: '供应商', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
         { temp: [], name: '首页banner', right: { C: '新建', R: '读取', U: '更新', D: '删除' } },
@@ -134,6 +134,14 @@ export default {
     showRoleList ({ row }) {
       this.title = '编辑权限'
       this.role = { ...row }
+      const roleArr = row.menu.map(it => {
+        return (it.slice(it.indexOf('>') + 3)).split('')
+      })
+
+      for (let j = 0; j < this.roleList.length; j++) {
+        this.roleList[j].temp = roleArr[j] || []
+      }
+      console.log(this.roleList)
     },
     // // 判断编辑权限
     // showRoleList ({ row }) {
